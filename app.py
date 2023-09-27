@@ -39,7 +39,6 @@ def image_to_gif(st_imagename=1,end_imagename=1):
         for i in range(st_imagename, end_imagename + 1): #选择多少张
             filename =  str(i).zfill(4)
             file_path = os.path.join(os.getcwd(),'images',filename)
-            print(file_path)
             writer.append_data(imageio.imread(file_path+".jpg"))
 
 if __name__ == '__main__':
