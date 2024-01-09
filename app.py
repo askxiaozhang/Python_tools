@@ -84,5 +84,17 @@ def video_to_gif(videoPath,resultName,fps=25):
     shutil.rmtree(random_name)
     print("All Finished")
 
+
 if __name__ == '__main__':
-    video_to_gif("/home/zhangchang/mygithub/Python_tools/test.webm","test1.gif")
+    video_path = "/home/zhangchang/mygithub/Python_tools/test7.mp4"
+    if not os.path.exists(video_path):
+        raise Exception("视频路径不存在")
+
+    image_name = video_path.split('/')[-1].split('.')[0] + '.gif'
+    while True: #防止重名
+        if os.path.exists(image_name):
+            image_name = image_name.split('.')[0] + '_1.gif'
+        else:
+            break
+    print(image_name)
+    video_to_gif(video_path, image_name)
