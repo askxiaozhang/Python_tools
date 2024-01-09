@@ -1,4 +1,6 @@
 import string
+from typing import Union
+
 import imageio
 import os
 import cv2
@@ -34,7 +36,7 @@ def video_to_image(videoPath,imgPath,save_format = '.jpg',imgNumber = 0,nameLeng
     capture.release()
     print("视频转图片结束! ")
 
-def image_to_gif(st_imagename=1,end_imagename=1,gifname = "demo.gif"):
+def image_to_gif(st_imagename=1,end_imagename=1,gifname = "demo.gif",tmp_path:Union[None,str] = None):
     import imageio
     '''
     uri：合成后的gif动图的名字，可以随意更改。
@@ -42,16 +44,23 @@ def image_to_gif(st_imagename=1,end_imagename=1,gifname = "demo.gif"):
     fps：帧率，也就是画面每秒传输帧数，值越大，gif动图的播放速度越大。
     gifname:保存的gif名字
     '''
-    os.chdir(os.getcwd())
-    if not os.path.exists("images"):
-        os.makedirs("images")
-
+    print(os.getcwd())
+    if tmp_path:
+        base_path = tmp_path
+    else:
+        os.chdir(os.getcwd())
+        if not os.path.exists("images"):
+            os.makedirs("images")
+        base_path = os.path.join(os.getcwd(),'images') + '/'
     with imageio.get_writer(uri = gifname,mode = "I",fps = 25) as writer:
         for i in range(st_imagename, end_imagename + 1): #选择多少张
             print(f"正在处理第{i}张")
             filename =  str(i).zfill(4)
-            file_path = os.path.join(os.getcwd(),'images',filename)
+            file_path = os.path.join(base_path,filename)
             writer.append_data(imageio.imread(file_path+".jpg"))
+
+    if not tmp_path: #如果是临时文件夹，删除
+        shutil.rmtree("images")
 def video_to_gif(videoPath,resultName,fps=25):
     '''
     :param videoPath: 视频路径 绝对路径。且路径不要含中文
@@ -70,10 +79,10 @@ def video_to_gif(videoPath,resultName,fps=25):
     image_nums = len(os.listdir(tmp_path))
     image_nums = 375 if image_nums > 375 else image_nums #TODO 默认上限为15s 即：25 * 15 = 375张照片
     print("step 2 loading:image_to_gif start")
-    image_to_gif(st_imagename=1,end_imagename=image_nums,gifname = resultName)
+    image_to_gif(st_imagename=1,end_imagename=image_nums,gifname = resultName, tmp_path=tmp_path)
     print("step 2 finished:image_to_gif end")
     shutil.rmtree(random_name)
     print("All Finished")
 
 if __name__ == '__main__':
-    video_to_gif(r"E:\Python_tools\Python_tools\video\test.mp4","test1.gif")
+    video_to_gif("/home/zhangchang/mygithub/Python_tools/test.webm","test1.gif")
